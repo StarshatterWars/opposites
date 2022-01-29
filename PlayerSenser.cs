@@ -30,7 +30,7 @@ public class PlayerSenser : MonoBehaviour
     void FindVisibleTargets()
     {
         //Collider[] TargetsInViewRadius = Physics.OverlapSphere(transform.position, ViewRadius, TargetMask);
-
+        VisibleTargets.Clear();
         Collider2D[] TargetsInViewRadius = Physics2D.OverlapCircleAll(transform.position, ViewRadius, TargetMask);
 
         for (int i = 0; i < TargetsInViewRadius.Length; i++)
