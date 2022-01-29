@@ -11,7 +11,7 @@ public class PlayerSenser : MonoBehaviour
     public LayerMask ObsticaleMask;
 
     [HideInInspector]
-    public List<Transform> visibleTargets = new List<Transform>();
+    public List<Transform> VisibleTargets = new List<Transform>();
 
     void Start()
     {
@@ -42,10 +42,19 @@ public class PlayerSenser : MonoBehaviour
                 float DistanceToTarget = Vector2.Distance(transform.position, Target.position);
                 if (!Physics.Raycast(transform.position, DirectionToTarget, DistanceToTarget, ObsticaleMask))
                 {
-                    visibleTargets.Add(Target);
+                    VisibleTargets.Add(Target); // adds enemy to seen list
                 }
             }
         }
+         for (int i = 0; i < VisibleTargets.Count; i++) // looks through all found objects
+        {
+            //Debug.Log(VisibleTargets[i].name);
+            if(VisibleTargets[i].tag == "Enemy Tag")
+            {
+                 VisibleTargets[i].gameObject.GetComponent<>().Insights(0.5f); // put in script youd like to access for that sepcific enemy
+            }
+        }
+        
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
@@ -57,4 +66,43 @@ public class PlayerSenser : MonoBehaviour
         return new Vector2(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad),  Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
 
     }
+    
+    
+    
+    
+    //-----------------------------------------------------------------------------------------------------------
+    //Add this to enemy script to detect it
+    float CountDown;
+    bool EnemyInPlayerView = false;
+    void CheckIfInSight() // call this in an update funtion
+    {
+        if (EnemyInPlayerView)
+        {
+            if (CountDown > 0)
+                CountDown -= 1 * Time.deltaTime;
+            else
+                OutOfSight();
+        }
+    }
+
+    public void Insights(float Delay)
+    {
+        
+        CountDown = Delay; // resets clock
+
+        if (CountDown > 0 && !EnemyInPlayerView)
+        {
+            EnemyInPlayerView = true; // put in enemy script if this is true, the enemy can begin to chase/shoot at player
+            //Debug.Log("Target In Sights");
+        }
+        
+    }
+
+    public void OutOfSight()
+    {            
+        EnemyInPlayerView = false;
+        Debug.Log("Target has looked away");
+        
+    }
+    
 }
