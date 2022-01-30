@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class DualMovementScript : MonoBehaviour
 {
+    // 2D rigidbody held by player 1 (White) and player 2 (Black)
+    public Rigidbody2D playerWRB;
+    public Rigidbody2D playerBRB;
 
-    public Transform playerWhite;
-    public Transform playerBlack;
-
+    // movement speed attribute
     public float fSpeed = 10f;
+
+    // Vector2 to hold horizontal and vertical input methods
+    private Vector2 moveVec;
 
     // Start is called before the first frame update
     void Start()
@@ -19,29 +23,17 @@ public class DualMovementScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);
-        transform.position += movement * Time.deltaTime * fSpeed;
+        // horizontal and vetical axis scale from -1 (left,backwards) to 1 (Right,Forward)
+        moveVec.x = Input.GetAxisRaw("Horizontal");
+        moveVec.y = Input.GetAxisRaw("Vertical");
+    }
 
-        if (Input.GetAxis("Vertical") == 1)
-        {
-            playerWhite.Translate(Vector3.up * fSpeed * Time.deltaTime);
-            playerBlack.Translate(Vector3.up * -fSpeed * Time.deltaTime);
-        }
-        else if (Input.GetAxis("Vertical") == -1)
-        {
-            playerWhite.Translate(Vector3.up * -fSpeed * Time.deltaTime, Space.World);
-            playerBlack.Translate(Vector3.up * fSpeed * Time.deltaTime, Space.World);
-        }
+    private void FixedUpdate()
+    {
+        // transform players' rigidbody in the direction held by moveVec, times by speed and timestep
+        // white and black sprites' movement are opposites
+        playerWRB.MovePosition(playerWRB.position + moveVec * fSpeed * Time.fixedDeltaTime);
+        playerBRB.MovePosition(playerBRB.position - moveVec * fSpeed * Time.fixedDeltaTime);
 
-        if (Input.GetAxis("Horizontal") == 1)
-        {
-            playerWhite.Translate(Vector3.right * fSpeed * Time.deltaTime, Space.World);
-            playerBlack.Translate(Vector3.right * -fSpeed * Time.deltaTime, Space.World);
-        }
-        else if (Input.GetAxis("Horizontal") == -1)
-        {
-            playerWhite.Translate(Vector3.left * fSpeed * Time.deltaTime, Space.World);
-            playerBlack.Translate(Vector3.left * -fSpeed * Time.deltaTime, Space.World);
-        }
     }
 }
